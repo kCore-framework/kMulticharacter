@@ -22,7 +22,7 @@ function debugPrint(...)
 
     local appendStr = ''
     for _, v in ipairs(args) do
-      appendStr = appendStr .. ' ' .. tostring(v)
+        appendStr = appendStr .. ' ' .. tostring(v)
     end
     local msgTemplate = '^3[%s]^0%s'
     local finalMsg = msgTemplate:format(currentResourceName, appendStr)
