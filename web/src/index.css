@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: white;
+}
+
+
+
+@layer base {
+    :root {
+      --background: 220 18% 6%;
+      --foreground: 0 0% 98%;
+      --card: 220 16% 8%;
+      --card-foreground: 0 0% 98%;
+      --popover: 220 16% 10%;
+      --popover-foreground: 0 0% 98%;
+      --primary: 150 100% 50%;
+      --primary-foreground: 220 18% 6%;
+      --secondary: 220 16% 12%;
+      --secondary-foreground: 0 0% 98%;
+      --muted: 220 16% 14%;
+      --muted-foreground: 220 10% 70%;
+      --accent: 150 70% 30%;
+      --accent-foreground: 0 0% 98%;
+      --destructive: 0 62.8% 30.6%;
+      --destructive-foreground: 0 0% 98%;
+      --border: 220 16% 16%;
+      --input: 220 16% 14%;
+      --ring: 150 100% 50%;
+      --user-message: 220 16% 12%;
+      --user-message-foreground: 0 0% 98%;
+      --admin-message: 150 70% 30%;
+      --admin-message-foreground: 220 18% 6%;
+      --admin-badge: 150 100% 50%;
+      --admin-badge-foreground: 220 18% 6%;
+      --sidebar-background: 220 18% 8%;
+      --sidebar-foreground: 0 0% 98%;
+      --sidebar-primary: 150 100% 50%;
+      --sidebar-primary-foreground: 220 18% 6%;
+      --sidebar-accent: 220 16% 14%;
+      --sidebar-accent-foreground: 0 0% 98%;
+      --sidebar-border: 220 16% 16%;
+      --sidebar-ring: 150 100% 50%;
+      --label-text-color: hsl(var(--foreground));
+      --label-border-color: hsl(var(--border));
+      --label-glow: 0 0 15px hsla(var(--primary), 0.6);
+      --label-glow-color: hsl(var(--primary));
+    }
+  
+  .dark {
+    --background: 229, 24%, 9%;
+    --foreground: 0 0% 98%;
+    --card: 229, 26%,10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 229, 26%, 13%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 341 96% 49%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 227, 27%, 18%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 227, 27%, 18%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 227, 27%, 18%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 227, 27%, 18%;
+    --input: 227, 27%, 18%;
+    --ring: 341 96% 49%;
+    --user-message: 1 3.7% 22%;
+    --user-message-foreground: 0 0% 98%;
+    --admin-message: 0 0% 98%;
+    --admin-message-foreground: 240 5.9% 10%;
+    --admin-badge: 0 0% 98%;
+    --admin-badge-foreground: 240 5.9% 10%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 341 96% 49%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 227, 27%, 18%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 227, 27%, 18%;
+    --sidebar-ring: 341 96% 49%;
+    --label-text-color: hsl(var(--foreground));
+    --label-border-color: hsl(var(--border));
+    --label-glow: 0 0 10px hsla(var(--primary), 0.5);
+    --label-glow-color: hsl(var(--primary));
+  }
+}
+
+
+/* Scrollbar Track */
+.scrollbar-track {
+  background: hsl(var(--secondary)) !important;
+  width: 8px !important;
+  border-radius: 0 !important;
+}
+
+/* Scrollbar Thumb */
+.scrollbar-thumb {
+  background: hsl(var(--primary)) !important;
+  width: 8px !important;
+  border-radius: 0 !important;
+}
+
+/* Fix for ScrollArea viewport */
+[data-radix-scroll-area-viewport] > div {
+  display: block !important;
+}

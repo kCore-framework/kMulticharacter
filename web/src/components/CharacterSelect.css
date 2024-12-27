@@ -1,0 +1,226 @@
+.container {
+    height: 100vh;
+    width: 100vw;
+    position: relative;
+    display: none;
+}
+
+.bar {
+    position: absolute;
+    width: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, #03dda7 0%, rgba(3, 221, 167, 0) 100%);
+    border-radius: 50px;
+    top: 79%;
+    left: 2%;
+}
+
+.bar2 {
+    position: absolute;
+    width: 20%;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(3, 221, 167, 0) 0%, #03dda7 100%);
+    border-radius: 50px;
+    top: 78.92%;
+    left: 2%;
+}
+
+.characters-icon {
+    position: absolute;
+    font-size: 45px;
+    top: 66.66%;
+    left: 2%;
+}
+
+.characters-text {
+    position: absolute;
+    font-family: 'Gilroy';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 40px;
+    top: 70.26%;
+    left: 2%;
+    color: white;
+}
+
+.characters-text2 {
+    position: absolute;
+    font-family: 'Gilroy';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 15px;
+    top: 72.66%;
+    left: 2%;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.characters-list {
+    position: absolute;
+    width: 25%;
+    height: 45%;
+    left: 2%;
+    top: 80.6%;
+    overflow-y: auto;
+}
+
+.character {
+    width: 100%;
+    height: 80px;
+    background: rgba(34, 34, 34, 0.7);
+    margin-bottom: 15px;
+    border-radius: 5px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.character:hover {
+    background: rgba(34, 34, 34, 0.9);
+}
+
+.char-selected {
+    background: rgba(3, 221, 167, 0.2);
+    border: 1px solid #03dda7;
+}
+
+.character-div {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    gap: 15px;
+}
+
+.user img, .user2 img {
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+#slot-name {
+    font-family: 'Gilroy';
+    font-style: normal;
+    font-weight: 800;
+    font-size: 17px;
+    color: white;
+}
+
+#cid {
+    display: block;
+    font-family: 'Gilroy';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.character-register {
+    position: absolute;
+    width: 25%;
+    height: auto;
+    left: 2%;
+    top: 20%;
+    background: rgba(34, 34, 34, 0.7);
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.char-register-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.char-register-inputs input {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+}
+
+.mydict {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.mydict label {
+    flex: 1;
+}
+
+.mydict input[type="radio"] {
+    display: none;
+}
+
+.mydict span {
+    display: block;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.mydict input[type="radio"]:checked + span {
+    background: #03dda7;
+}
+
+.char-register-inputss {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.character-reg-btn {
+    flex: 1;
+    background: #03dda7;
+    border: none;
+    padding: 10px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.character-reg-btn:hover {
+    background: #02c494;
+}
+
+.welcomescreen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lds-spinner {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.lds-spinner div {
+    transform-origin: 40px 40px;
+    animation: lds-spinner 1.2s linear infinite;
+}
+
+.lds-spinner div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 3px;
+    left: 37px;
+    width: 6px;
+    height: 18px;
+    border-radius: 20%;
+    background: #03dda7;
+}
+
+@keyframes lds-spinner {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
