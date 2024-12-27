@@ -250,19 +250,19 @@ end
 
 
 RegisterNUICallback('previewCharacter', function(data, cb)
-  if not data.slot then
-      cb({ error = "No slot provided" })
-      return
-  end
+    if not data.slot then
+        cb({ error = "No slot provided" })
+        return
+    end
 
-  if data.createMode then
-      UpdatePreviewPed(data.slot, nil, {
-          sex = data.sex or 'male'
-      })
-  end
+    if data.createMode then
+        UpdatePreviewPed(data.slot, nil, {
+            sex = data.sex or 'male'
+        })
+    end
 
-  HandlePreviewCamera(data.slot, true)
-  cb({})
+    HandlePreviewCamera(data.slot, true)
+    cb({})
 end)
 
 
@@ -274,7 +274,6 @@ local function toggleNuiFrame(shouldShow)
     DisplayRadar(false)
 
     local playerPed = PlayerPedId()
-    SetEntityVisible(playerPed, false, false)
     SetEntityCoords(playerPed, -139.2098, 565.0248, 195.0446, false, false, false, true)
     FreezeEntityPosition(playerPed, true)
     if shouldShow then
@@ -320,14 +319,6 @@ RegisterNUICallback('getCharacterSlots', function(data, cb)
         if maxSlots > #characterPositions then      
             print('^1 MAX SLOTS MORE THAN CHARACTER POSITIONS')
             maxSlots = #characterPositions
-        end
-
-        if CharacterSlots then
-            for slot, charData in pairs(CharacterSlots) do
-                if charData then
-                    UpdatePreviewPed(slot, charData)
-                end
-            end
         end
         
         cb({
