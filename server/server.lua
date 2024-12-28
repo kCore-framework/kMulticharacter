@@ -1,5 +1,6 @@
 
 exports['kCore']:RegisterServerCallback('kCore:getCharacterSlots', function(source, cb)
+    SetPlayerRoutingBucket(source, source)
     local identifier = GetPlayerIdentifier(source)
     
     if not identifier then 
