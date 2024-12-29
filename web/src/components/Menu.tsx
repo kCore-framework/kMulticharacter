@@ -4,9 +4,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import CreateCharacterForm from './CharacterCreate';
 import NoiceButton from './ui/new-button';
-import { Character, CharacterFormData, CharacterSelectionProps, Headshots, HeadshotMessage } from '@/types';
+import { Character, CharacterFormData, CharacterSelectionProps, HeadshotMessage, Headshots } from '@/types';
 import { useCharacters } from './hooks/getChars';
 import { fetchNui } from '@/utils/fetchNui';
+import { useVisibility } from '../providers/VisibilityProvider';
 
 const CharacterSelection: React.FC<CharacterSelectionProps> = ({
   characters,
@@ -16,7 +17,8 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({
   onNewCharacter,
   onPlay
 }) => {
-  const [headshots, setHeadshots] = useState<Headshots>({});
+  const { setVisible } = useVisibility();
+  const [headshots, setHeadshots] = useState<Record<number, string>>({});
 
   const handleCharacterSelect = async (char: Character) => {
     onSelect(char);
@@ -28,6 +30,11 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({
     } catch (err) {
       console.error('Failed to trigger preview:', err);
     }
+  };
+
+  const handlePlay = async (slot: number) => {
+    setVisible(false); // Hide UI when playing
+    onPlay(slot);
   };
 
   const handleEmptySlotSelect = async (slot: number) => {
@@ -51,11 +58,11 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({
       if (message.action === 'updateCharacterHeadshot') {
         setHeadshots((prev: Headshots) => ({
           ...prev,
-          [message.data.slot]: `https://kMulticharacter/${message.data.texture}/${message.data.texture}` // still fucked
+          [message.data.slot]: `https://nui-img/${message.data.texture}/${message.data.texture}`
         }));
       }
     };
-
+  
     window.addEventListener('message', handleHeadshotUpdate);
     return () => window.removeEventListener('message', handleHeadshotUpdate);
   }, []);
@@ -140,7 +147,7 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({
       </ScrollArea>
       {selectedChar && (
         <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-[hsl(var(--background))] via-[hsl(var(--background)/0.8)] to-transparent pt-16 z-20">
-          <NoiceButton onClick={() => onPlay(selectedChar.char_slot)}>
+          <NoiceButton onClick={() => handlePlay(selectedChar.char_slot)}>
             <Play className="w-5 h-5" strokeWidth={2} />
             <span className="font-semibold tracking-wide">Play Now</span>
           </NoiceButton>
@@ -151,26 +158,27 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({
 };
 
 const CharacterMenu: React.FC = () => {
-  const { characters, loading, error, maxSlots, selectCharacter } = useCharacters();
+  const { characters, loading, error, maxSlots, autoload, selectCharacter } = useCharacters();
+  const { setVisible } = useVisibility();
   const [selectedChar, setSelectedChar] = useState<Character | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
   const [currentSlot, setCurrentSlot] = useState<number>(1);
 
+
   useEffect(() => { 
-    if (!loading && !error) {
-      const slot1Character = characters.find(c => c.char_slot === 1);
-      if (slot1Character) {
-        fetchNui('selectCharacter', { slot: 1, preview: true });
-        setSelectedChar(slot1Character);
-      } else {
+    if (!loading && !error && characters) {
+      if (!autoload) {
         fetchNui('previewCharacter', { 
-          slot: 1, 
-          createMode: true,
-          sex: 'male'
+          slot: null, 
+          preview: true 
         });
       }
     }
-  }, [loading, error, characters]);
+  }, [loading, error, characters, autoload]);
+
+  if (!loading && !error && autoload && characters.length === 1) {
+    return null; 
+  }
 
   if (loading) {
     return (
@@ -198,10 +206,17 @@ const CharacterMenu: React.FC = () => {
         height: formData.height,
         birthday: formData.birthday
       });
+      setVisible(false); 
     } catch (err) {
       console.error('Failed to create character:', err);
     }
   };
+
+  const handleSelectCharacter = async (slot: number) => {
+    await selectCharacter(slot);
+    setVisible(false); 
+  };
+
 
   return (
     <div className="flex h-screen w-full">
@@ -229,7 +244,7 @@ const CharacterMenu: React.FC = () => {
                 setCurrentSlot(slot);
                 setIsCreatingNew(true);
               }}
-              onPlay={selectCharacter}
+              onPlay={handleSelectCharacter}
             />
           )}
         </div>

@@ -2,12 +2,10 @@ import React, {
   Context,
   createContext,
   useContext,
-  useEffect,
   useState,
+  useEffect
 } from "react";
 import { useNuiEvent } from "../hooks/useNuiEvent";
-import { fetchNui } from "../utils/fetchNui";
-import { isEnvBrowser } from "../utils/misc";
 
 const VisibilityCtx = createContext<VisibilityProviderValue | null>(null);
 
@@ -16,32 +14,26 @@ interface VisibilityProviderValue {
   visible: boolean;
 }
 
-// This should be mounted at the top level of your application, it is currently set to
-// apply a CSS visibility value. If this is non-performant, this should be customized.
 export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [visible, setVisible] = useState(false);
+  const [isHidden, setIsHidden] = useState(true);
 
   useNuiEvent<boolean>("setVisible", setVisible);
 
-  // Handle pressing escape/backspace
   useEffect(() => {
-    // Only attach listener when we are visible
-    if (!visible) return;
-
-    const keyHandler = (e: KeyboardEvent) => {
-      if (["Backspace", "Escape"].includes(e.code)) {
-        if (!isEnvBrowser()) fetchNui("hideFrame");
-        else setVisible(!visible);
-      }
-    };
-
-    window.addEventListener("keydown", keyHandler);
-
-    return () => window.removeEventListener("keydown", keyHandler);
+    if (visible) {
+      setIsHidden(false);
+    } else {
+      const timeout = setTimeout(() => {
+        setIsHidden(true);
+      }, 300); 
+      
+      return () => clearTimeout(timeout);
+    }
   }, [visible]);
-
+  
   return (
     <VisibilityCtx.Provider
       value={{
@@ -50,7 +42,13 @@ export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({
       }}
     >
       <div
-        style={{ visibility: visible ? "visible" : "hidden", height: "100%" }}
+        className={`transition-opacity duration-300 ${
+          visible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        style={{ 
+          height: "100%",
+          display: isHidden ? 'none' : 'block'
+        }}
       >
         {children}
       </div>
@@ -60,5 +58,5 @@ export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export const useVisibility = () =>
   useContext<VisibilityProviderValue>(
-    VisibilityCtx as Context<VisibilityProviderValue>,
+    VisibilityCtx as Context<VisibilityProviderValue>
   );

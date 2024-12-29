@@ -1,17 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Character } from '@/types';
+import { Character, CharacterResponse } from '@/types';
 import { fetchNui } from '@/utils/fetchNui';
-
-interface CharacterResponse {
-  characters: { [key: string]: Character };
-  maxSlots: number;
-}
 
 export const useCharacters = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [maxSlots, setMaxSlots] = useState<number>(3);
+  const [autoload, setAutoload] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -34,6 +30,7 @@ export const useCharacters = () => {
         
         setCharacters(charArray);
         setMaxSlots(response.maxSlots || 3);
+        setAutoload(response.autoload || false);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch characters');
@@ -61,6 +58,7 @@ export const useCharacters = () => {
     loading,
     error,
     maxSlots,
+    autoload,
     selectCharacter
   };
 };
