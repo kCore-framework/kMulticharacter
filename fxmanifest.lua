@@ -11,6 +11,7 @@ game "gta5"
 
 ui_page 'web/build/index.html'
 
+shared_script 'config.lua'
 client_script "client/**/*"
 server_script "server/**/*"
 

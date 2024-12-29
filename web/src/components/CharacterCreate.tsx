@@ -70,13 +70,6 @@ const CreateCharacterForm: React.FC<CreateCharacterFormProps> = ({ onBack, onSub
     }
   };
 
-  useEffect(() => {
-    fetchNui('previewCharacter', {
-      slot: currentSlot,
-      createMode: true,
-      sex: formData.sex
-    }).catch(console.error);
-  }, [currentSlot]);
 
   return (
     <div className="h-full flex flex-col">

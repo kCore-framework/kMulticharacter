@@ -158,19 +158,12 @@ const CharacterMenu: React.FC = () => {
 
   useEffect(() => { 
     if (!loading && !error) {
-      const slot1Character = characters.find(c => c.char_slot === 1);
-      if (slot1Character) {
-        fetchNui('selectCharacter', { slot: 1, preview: true });
-        setSelectedChar(slot1Character);
-      } else {
-        fetchNui('previewCharacter', { 
-          slot: 1, 
-          createMode: true,
-          sex: 'male'
-        });
-      }
+      fetchNui('previewCharacter', { 
+        slot: null, 
+        preview: true 
+      });
     }
-  }, [loading, error, characters]);
+  }, [loading, error]);
 
   if (loading) {
     return (
