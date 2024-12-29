@@ -110,7 +110,7 @@ local function UpdatePreviewPed(slot, charData, previewData)
         print("Failed to create preview ped")
         return
     end
-    local appearance = exports['kClothing']:GenerateRandomAppearance(ped)
+
 
     SetEntityInvincible(ped, true)
     FreezeEntityPosition(ped, true)
@@ -129,19 +129,7 @@ local function UpdatePreviewPed(slot, charData, previewData)
             needsNewHeadshot = true
         end
     elseif previewData then
-        local defaultAppearance = {
-            model = model,
-            genetics = {
-                mother = 21,
-                father = 0,
-                shapeMix = 0.5,
-                skinMix = 0.5
-            },
-            clothing = {},
-            faceFeatures = {},
-            headOverlays = {}
-        }
-        exports['kClothing']:ApplyAppearance(defaultAppearance, ped)
+        local appearance = exports['kClothing']:GenerateRandomAppearance(ped)
         needsNewHeadshot = true
     end
 
@@ -167,13 +155,13 @@ RegisterNUICallback('previewCharacter', function(data, cb)
             UpdatePreviewPed(data.slot, nil, {
                 sex = data.sex or 'male'
             })
-            exports['kMulticharacter']:HandlePreviewCamera(data.slot, true)
+            HandlePreviewCamera(data.slot, true)
         end
     else
         if data.slot then
-            exports['kMulticharacter']:HandlePreviewCamera(data.slot, true)
+            HandlePreviewCamera(data.slot, true)
         else
-            exports['kMulticharacter']:HandlePreviewCamera(nil, false)
+            HandlePreviewCamera(nil, false)
         end
     end
     
@@ -205,7 +193,7 @@ local function toggleNuiFrame(shouldShow)
             end
         end
     else
-        exports['kMulticharacter']:HandlePreviewCamera(nil, false)
+        HandlePreviewCamera(nil, false)
         for _, ped in pairs(previewPeds) do
             if DoesEntityExist(ped) then
                 DeleteEntity(ped)
@@ -259,12 +247,12 @@ RegisterNUICallback('selectCharacter', function(data, cb)
     end
 
     if data.preview then
-        exports['kMulticharacter']:HandlePreviewCamera(data.slot, true)
+        HandlePreviewCamera(data.slot, true)
         cb({})
         return
     end
     StopCameraCycle() 
-    exports['kMulticharacter']:HandlePreviewCamera(nil, false) 
+    HandlePreviewCamera(nil, false) 
     
     TriggerServerEvent('kCore:selectCharacter', data.slot)
     toggleNuiFrame(false)

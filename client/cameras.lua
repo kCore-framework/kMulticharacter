@@ -139,9 +139,6 @@ function HandlePreviewCamera(slot, active)
     end
 end
 
-
-exports('HandlePreviewCamera', HandlePreviewCamera)
-
 AddEventHandler('onResourceStop', function(resourceName)
     if GetCurrentResourceName() ~= resourceName then return end
     StopCameraCycle()
