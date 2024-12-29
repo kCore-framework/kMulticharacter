@@ -1,5 +1,5 @@
 Config = {
-    defaultPos = vec3(-1597.2860, -3004.9314, -76.0049), -- for ped teleporation into interior (for init)
+    defaultPos = vec3(-1597.2860, -3004.9314, -76.0049+0.99), -- for ped teleporation into interior (for init)
     characterPositions = {
         [1] = {
             coords = vec4(-1597.4766, -2999.7866, -75.8052-0.99, 179.0319),

@@ -172,13 +172,14 @@ local function toggleNuiFrame(shouldShow)
     DisplayRadar(false)
 
     local playerPed = PlayerPedId()
-    local interior = GetInteriorAtCoords(Config.defaultPos)
-    LoadInterior(interior)
+    local interior = 271617
+    PinInteriorInMemory(interior)
     while not IsInteriorReady(interior) do
         Wait(100)
     end
-    FreezeEntityPosition(playerPed, true)
+
     SetEntityCoords(playerPed, Config.defaultPos)
+    FreezeEntityPosition(playerPed, true)
 
     SetNuiFocus(shouldShow, shouldShow)
     SendReactMessage('setVisible', shouldShow)
@@ -207,25 +208,33 @@ RegisterCommand('campos', function()
     print(GetGameplayCamCoord(), GetGameplayCamRot())
 end)
 
-CreateThread(function()
-    while true do
-        Wait(0)
-        if NetworkIsSessionStarted() then
-            local ped = PlayerPedId()
-            local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
-                CharacterSlots = response.characters
-                if response.maxSlots <= 1 and response.autoload and response.characters[1] then
-                    TriggerServerEvent('kCore:selectCharacter', 1)
-                    toggleNuiFrame(false)
-                    SetEntityCoords(ped, -131.6913, 558.3939, 160.0)
-                else
-                    toggleNuiFrame(true)
-                end
-            end)
-            break
+AddEventHandler('playerSpawned', function(data)
+    local ped = PlayerPedId()
+    local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
+        CharacterSlots = response.characters
+        if response.maxSlots <= 1 and response.autoload and response.characters[1] then
+            TriggerServerEvent('kCore:selectCharacter', 1)
+            toggleNuiFrame(false)
+
+        else
+            toggleNuiFrame(true)
         end
-    end
+    end)
 end)
+
+RegisterCommand('mChar', function() -- debug remove on prod
+    local ped = PlayerPedId()
+    local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
+        CharacterSlots = response.characters
+        if response.maxSlots <= 1 and response.autoload and response.characters[1] then
+            TriggerServerEvent('kCore:selectCharacter', 1)
+            toggleNuiFrame(false)
+        else
+            toggleNuiFrame(true)
+        end
+    end)
+end)
+
 
 RegisterNUICallback('getCharacterSlots', function(data, cb)
 
