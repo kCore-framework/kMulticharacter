@@ -4,7 +4,6 @@ previewPeds = {}
 local currentCam = nil
 local characterHeadshots = {}
 
-
 local function PlayPedAnimation(ped, position)
     if not position.anim then
         return
@@ -111,7 +110,6 @@ local function UpdatePreviewPed(slot, charData, previewData)
         return
     end
 
-
     SetEntityInvincible(ped, true)
     FreezeEntityPosition(ped, true)
     SetEntityHeading(ped, pos.coords.w)
@@ -147,7 +145,6 @@ local function UpdatePreviewPed(slot, charData, previewData)
     end
 end
 
-
 RegisterNUICallback('previewCharacter', function(data, cb)
     if data.createMode then
 
@@ -164,7 +161,7 @@ RegisterNUICallback('previewCharacter', function(data, cb)
             HandlePreviewCamera(nil, false)
         end
     end
-    
+
     cb({})
 end)
 
@@ -208,33 +205,27 @@ RegisterCommand('campos', function()
     print(GetGameplayCamCoord(), GetGameplayCamRot())
 end)
 
+local function LoadCharacterSelection()
+    local ped = PlayerPedId()
+    local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
+        CharacterSlots = response.characters
+        if response.maxSlots <= 1 and response.autoload and response.characters[1] then
+            TriggerServerEvent('kCore:selectCharacter', 1)
+            toggleNuiFrame(false)
+        else
+            toggleNuiFrame(true)
+        end
+    end)
+end
+exports('LoadCharacterSelection', LoadCharacterSelection) -- use for some logout feature later in core
+
 AddEventHandler('playerSpawned', function(data)
-    local ped = PlayerPedId()
-    local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
-        CharacterSlots = response.characters
-        if response.maxSlots <= 1 and response.autoload and response.characters[1] then
-            TriggerServerEvent('kCore:selectCharacter', 1)
-            toggleNuiFrame(false)
-
-        else
-            toggleNuiFrame(true)
-        end
-    end)
+    LoadCharacterSelection()
 end)
 
-RegisterCommand('mChar', function() -- debug remove on prod
-    local ped = PlayerPedId()
-    local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
-        CharacterSlots = response.characters
-        if response.maxSlots <= 1 and response.autoload and response.characters[1] then
-            TriggerServerEvent('kCore:selectCharacter', 1)
-            toggleNuiFrame(false)
-        else
-            toggleNuiFrame(true)
-        end
-    end)
+RegisterCommand('mChar', function()
+    LoadCharacterSelection()
 end)
-
 
 RegisterNUICallback('getCharacterSlots', function(data, cb)
 
@@ -260,21 +251,20 @@ RegisterNUICallback('selectCharacter', function(data, cb)
         cb({})
         return
     end
-    StopCameraCycle() 
-    HandlePreviewCamera(nil, false) 
-    
+    StopCameraCycle()
+    HandlePreviewCamera(nil, false)
+
     TriggerServerEvent('kCore:selectCharacter', data.slot)
     toggleNuiFrame(false)
-    
+
     local playerPed = PlayerPedId()
     FreezeEntityPosition(playerPed, false)
     SetEntityVisible(playerPed, true, true)
-    
+
     DoScreenFadeIn(1000)
-    
+
     cb({})
 end)
-
 
 RegisterNUICallback('createCharacter', function(data, cb)
     local ped = PlayerPedId()
