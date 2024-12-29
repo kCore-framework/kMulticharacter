@@ -169,9 +169,6 @@ RegisterNUICallback('previewCharacter', function(data, cb)
 end)
 
 local function toggleNuiFrame(shouldShow)
-    SetNuiFocus(shouldShow, shouldShow)
-    SendReactMessage('setVisible', shouldShow)
-
     DisplayRadar(false)
 
     local playerPed = PlayerPedId()
@@ -182,6 +179,9 @@ local function toggleNuiFrame(shouldShow)
     end
     FreezeEntityPosition(playerPed, true)
     SetEntityCoords(playerPed, Config.defaultPos)
+
+    SetNuiFocus(shouldShow, shouldShow)
+    SendReactMessage('setVisible', shouldShow)
 
     if shouldShow then
         CreatePreviewPeds()
