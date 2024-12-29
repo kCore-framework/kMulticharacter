@@ -10,23 +10,23 @@ local characterPositions = {
         camPos = {
             coords = vec3(-131.650635, 561.589355, 196.331726),
             rot = vec3(-2.404815, 0.000000, 179.539108),
-            fov = 50.0  
+            fov = 50.0
         }
     },
     [2] = {
         coords = vec4(-133.8127, 558.3948, 194.9952, 2.7517),
         camPos = {
-          coords = vec3(-133.942078, 561.650146, 196.325363),
-          rot = 	vec3(-2.776617, 0.000000, -179.437973),
-          fov = 50.0  
+            coords = vec3(-133.942078, 561.650146, 196.325363),
+            rot = 	vec3(-2.776617, 0.000000, -179.437973),
+            fov = 50.0
         }
     },
     [3] = {
         coords = vec4(-135.8896, 558.4208, 194.9952, 4.8521),
         camPos = {
-          coords = vec3(-136.000961, 561.653564, 196.324142),
-          rot = vec3(-2.742815, -0.000000, 179.672531),
-          fov = 50.0  
+            coords = vec3(-136.000961, 561.653564, 196.324142),
+            rot = vec3(-2.742815, -0.000000, 179.672531),
+            fov = 50.0
         }
     }
 }
@@ -95,7 +95,7 @@ local function UpdatePreviewPed(slot, charData, previewData)
     local pos = characterPositions[slot]
     if not pos then 
         print("No position data for slot", slot)
-        return 
+        return
     end
     
     local model
@@ -120,7 +120,7 @@ local function UpdatePreviewPed(slot, charData, previewData)
     local ped = CreatePed(-1, model, pos.coords.x, pos.coords.y, pos.coords.z, pos.coords.w, false, true)
     if not ped then 
         print("Failed to create preview ped")
-        return 
+        return
     end
     
     SetEntityInvincible(ped, true)
@@ -170,81 +170,79 @@ local function UpdatePreviewPed(slot, charData, previewData)
 end
 
 local function HandlePreviewCamera(slot, active)
-  if active and characterPositions[slot] then
-      local camData = characterPositions[slot].camPos
-      local ped = previewPeds[slot]
-      if DoesEntityExist(ped) then
-        for previewSlot, previewPed in pairs(previewPeds) do
-            if DoesEntityExist(previewPed) then
-                SetEntityAlpha(previewPed, previewSlot == slot and 255 or 200, false)
+    if active and characterPositions[slot] then
+        local camData = characterPositions[slot].camPos
+        local ped = previewPeds[slot]
+        if DoesEntityExist(ped) then
+            for previewSlot, previewPed in pairs(previewPeds) do
+                if DoesEntityExist(previewPed) then
+                    SetEntityAlpha(previewPed, previewSlot == slot and 255 or 200, false)
+                end
+            end
+        end
+        if not currentCam then
+            currentCam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
+          
+            local pedHeight = GetEntityHeight(ped, true)
+            local camPos = vec3(
+                camData.coords.x,
+                camData.coords.y,
+                camData.coords.z + (pedHeight * 0.1)
+            )
+
+            SetCamCoord(currentCam, camPos.x, camPos.y, camPos.z)
+            SetCamRot(currentCam, camData.rot.x, camData.rot.y, camData.rot.z, 2)
+            SetCamFov(currentCam, camData.fov)
+
+            local pedCoords = GetEntityCoords(ped)
+            local pedBoneIndex = GetPedBoneIndex(ped, 31086)
+            if pedBoneIndex ~= -1 then
+                local boneCoords = GetPedBoneCoords(ped, pedBoneIndex)
+                PointCamAtCoord(currentCam, boneCoords.x, boneCoords.y, boneCoords.z)
+            end
+          
+            SetCamActive(currentCam, true)
+            RenderScriptCams(true, true, 1000, true, true)
+        else
+            local newCam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
+          
+            local pedHeight = GetEntityHeight(ped, true)
+            local camPos = vec3(
+                camData.coords.x,
+                camData.coords.y,
+                camData.coords.z + (pedHeight * 0.1)
+            )
+          
+            SetCamCoord(newCam, camPos.x, camPos.y, camPos.z)
+            SetCamRot(newCam, camData.rot.x, camData.rot.y, camData.rot.z, 2)
+            SetCamFov(newCam, camData.fov)
+            
+            local pedBoneIndex = GetPedBoneIndex(ped, 31086)
+            if pedBoneIndex ~= -1 then
+                local boneCoords = GetPedBoneCoords(ped, pedBoneIndex)
+                PointCamAtCoord(newCam, boneCoords.x, boneCoords.y, boneCoords.z)
+            end
+            
+            SetCamActiveWithInterp(newCam, currentCam, 1000)
+            
+            Wait(1000)
+            DestroyCam(currentCam, false)
+            currentCam = newCam
+        end
+    else
+        if currentCam then
+            RenderScriptCams(false, true, 1000, true, true)
+            Wait(1000)
+            DestroyCam(currentCam, true)
+            currentCam = nil
+        end
+
+        for _, ped in pairs(previewPeds) do
+            if DoesEntityExist(ped) then
+                SetEntityAlpha(ped, 255, false)
             end
         end
     end
-      if not currentCam then
-          currentCam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
-          
-          local pedHeight = GetEntityHeight(ped, true)
-          local camPos = vec3(
-              camData.coords.x,
-              camData.coords.y,
-              camData.coords.z + (pedHeight * 0.1) 
-          )
-          
-          SetCamCoord(currentCam, camPos.x, camPos.y, camPos.z)
-          SetCamRot(currentCam, camData.rot.x, camData.rot.y, camData.rot.z, 2)
-          SetCamFov(currentCam, camData.fov)
-
-          local pedCoords = GetEntityCoords(ped)
-          local pedBoneIndex = GetPedBoneIndex(ped, 31086)
-          if pedBoneIndex ~= -1 then
-              local boneCoords = GetPedBoneCoords(ped, pedBoneIndex)
-              PointCamAtCoord(currentCam, boneCoords.x, boneCoords.y, boneCoords.z)
-          end
-          
-          SetCamActive(currentCam, true)
-          RenderScriptCams(true, true, 1000, true, true)
-      else
-          local newCam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
-          
-          local pedHeight = GetEntityHeight(ped, true)
-          local camPos = vec3(
-              camData.coords.x,
-              camData.coords.y,
-              camData.coords.z + (pedHeight * 0.1)
-          )
-          
-          SetCamCoord(newCam, camPos.x, camPos.y, camPos.z)
-          SetCamRot(newCam, camData.rot.x, camData.rot.y, camData.rot.z, 2)
-          SetCamFov(newCam, camData.fov)
-          
-          local pedBoneIndex = GetPedBoneIndex(ped, 31086)
-          if pedBoneIndex ~= -1 then
-              local boneCoords = GetPedBoneCoords(ped, pedBoneIndex)
-              PointCamAtCoord(newCam, boneCoords.x, boneCoords.y, boneCoords.z)
-          end
-          
-          SetCamActiveWithInterp(newCam, currentCam, 1000)
-          
-          Wait(1000)
-          DestroyCam(currentCam, false)
-          currentCam = newCam
-      end
-
-    
-  else
-      if currentCam then
-          RenderScriptCams(false, true, 1000, true, true)
-          Wait(1000)
-          DestroyCam(currentCam, true)
-          currentCam = nil
-      end
-
-      for _, ped in pairs(previewPeds) do
-          if DoesEntityExist(ped) then
-              SetEntityAlpha(ped, 255, false)
-          end
-      end
-  end
 end
 
 
@@ -275,7 +273,6 @@ local function toggleNuiFrame(shouldShow)
 
     local playerPed = PlayerPedId()
     SetEntityCoords(playerPed, -139.2098, 565.0248, 195.0446, false, false, false, true)
-    FreezeEntityPosition(playerPed, true)
     if shouldShow then
 
         CreatePreviewPeds()
@@ -301,10 +298,20 @@ RegisterCommand('campos', function()
     print(GetGameplayCamCoord(), GetGameplayCamRot())
 end)
 
-CreateThread(function()
-    Wait(1000)
-    toggleNuiFrame(true)
+AddEventHandler('playerSpawned', function(data)
+    local ped = PlayerPedId()
+    local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
+        if response.maxSlots <= 1 and response.autoload and response.characters[1] then
+            TriggerServerEvent('kCore:selectCharacter', 1)
+            toggleNuiFrame(false)
+            FreezeEntityPosition(ped, false)
+            SetEntityCoords(ped, -131.6913, 558.3939, 160.0)
+        else
+            toggleNuiFrame(true)
+        end
+    end)
 end)
+
 
 RegisterNUICallback('getCharacterSlots', function(data, cb)
     exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
@@ -349,6 +356,9 @@ RegisterNUICallback('selectCharacter', function(data, cb)
 end)
 
 RegisterNUICallback('createCharacter', function(data, cb)
+    local ped = PlayerPedId()
+    SetEntityVisible(ped, true, true)
+    FreezeEntityPosition(ped, false)
     if not data.slot or not data.firstName or not data.lastName then
         cb({ error = "Missing required fields" })
         return
@@ -368,6 +378,7 @@ end)
 
 RegisterNetEvent('kCore:loadPlayer')
 AddEventHandler('kCore:loadPlayer', function(playerData, isNew)
+    FreezeEntityPosition(PlayerPedId(), false)
     print("Character loaded", json.encode(playerData))
 end)
 
