@@ -215,8 +215,8 @@ local function LoadCharacterSelection()
     local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
         CharacterSlots = response.characters
         maxSlots =  response.maxSlots
-        autoLoad = response.autoload 
         if response.maxSlots <= 1 and response.autoload and response.characters[1] then
+            autoLoad = response.autoload 
             TriggerServerEvent('kCore:selectCharacter', 1)
         else
             toggleNuiFrame(true)
