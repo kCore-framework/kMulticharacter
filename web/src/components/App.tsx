@@ -11,9 +11,9 @@ debugData([
 
 const App: React.FC = () => {
   return (
-    <div className="nui-wrapper">
-       <CharacterMenu/>
-    </div>
+      <div className="nui-wrapper">
+          <CharacterMenu/>
+      </div>
   );
 };
 
