@@ -1,5 +1,6 @@
 local CharacterSlots = false
 local maxSlots = false
+local autoLoad = false
 previewPeds = {}
 local currentCam = nil
 local characterHeadshots = {}
@@ -146,8 +147,12 @@ local function UpdatePreviewPed(slot, charData, previewData)
 end
 
 RegisterNUICallback('previewCharacter', function(data, cb)
-    if data.createMode then
+    if autoLoad then
+        cb({})
+        return
+    end
 
+    if data.createMode then
         if data.slot then
             UpdatePreviewPed(data.slot, nil, {
                 sex = data.sex or 'male'
@@ -209,9 +214,10 @@ local function LoadCharacterSelection()
     local ped = PlayerPedId()
     local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
         CharacterSlots = response.characters
+        maxSlots =  response.maxSlots
+        autoLoad = response.autoload 
         if response.maxSlots <= 1 and response.autoload and response.characters[1] then
             TriggerServerEvent('kCore:selectCharacter', 1)
-            toggleNuiFrame(false)
         else
             toggleNuiFrame(true)
         end
@@ -228,13 +234,13 @@ RegisterCommand('mChar', function()
 end)
 
 RegisterNUICallback('getCharacterSlots', function(data, cb)
-
     while not CharacterSlots do
         Wait(0)
     end
     cb({
         characters = CharacterSlots,
-        maxSlots = maxSlots
+        maxSlots = maxSlots or 3,
+        autoload = autoLoad or false
     })
 end)
 
@@ -246,13 +252,16 @@ RegisterNUICallback('selectCharacter', function(data, cb)
         return
     end
 
-    if data.preview then
+    if data.preview and not autoLoad then  
         HandlePreviewCamera(data.slot, true)
         cb({})
         return
     end
-    StopCameraCycle()
-    HandlePreviewCamera(nil, false)
+
+    if not autoLoad then  
+        StopCameraCycle()
+        HandlePreviewCamera(nil, false)
+    end
 
     TriggerServerEvent('kCore:selectCharacter', data.slot)
     toggleNuiFrame(false)
@@ -265,11 +274,16 @@ RegisterNUICallback('selectCharacter', function(data, cb)
 
     cb({})
 end)
-
 RegisterNUICallback('createCharacter', function(data, cb)
     local ped = PlayerPedId()
     SetEntityVisible(ped, true, true)
     FreezeEntityPosition(ped, false)
+
+
+    StopCameraCycle()
+    HandlePreviewCamera(nil, false)
+ 
+
     if not data.slot or not data.firstName or not data.lastName then
         cb({
             error = "Missing required fields"

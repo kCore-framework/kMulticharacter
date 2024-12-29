@@ -4,7 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card } from '@/components/ui/card';
 import CreateCharacterForm from './CharacterCreate';
 import NoiceButton from './ui/new-button';
-import { Character, CharacterFormData, CharacterSelectionProps } from '@/types';
+import { Character, CharacterFormData, CharacterSelectionProps, HeadshotMessage, Headshots } from '@/types';
 import { useCharacters } from './hooks/getChars';
 import { fetchNui } from '@/utils/fetchNui';
 import { useVisibility } from '../providers/VisibilityProvider';
@@ -58,11 +58,11 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({
       if (message.action === 'updateCharacterHeadshot') {
         setHeadshots((prev: Headshots) => ({
           ...prev,
-          [message.data.slot]: `https://kMulticharacter/${message.data.texture}/${message.data.texture}` // still fucked
+          [message.data.slot]: `https://nui-img/${message.data.texture}/${message.data.texture}`
         }));
       }
     };
-
+  
     window.addEventListener('message', handleHeadshotUpdate);
     return () => window.removeEventListener('message', handleHeadshotUpdate);
   }, []);
@@ -158,7 +158,7 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({
 };
 
 const CharacterMenu: React.FC = () => {
-  const { characters, loading, error, maxSlots, selectCharacter } = useCharacters();
+  const { characters, loading, error, maxSlots, autoload, selectCharacter } = useCharacters();
   const { setVisible } = useVisibility();
   const [selectedChar, setSelectedChar] = useState<Character | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(false);
@@ -166,13 +166,19 @@ const CharacterMenu: React.FC = () => {
 
 
   useEffect(() => { 
-    if (!loading && !error) {
-      fetchNui('previewCharacter', { 
-        slot: null, 
-        preview: true 
-      });
+    if (!loading && !error && characters) {
+      if (!autoload) {
+        fetchNui('previewCharacter', { 
+          slot: null, 
+          preview: true 
+        });
+      }
     }
-  }, [loading, error]);
+  }, [loading, error, characters, autoload]);
+
+  if (!loading && !error && autoload && characters.length === 1) {
+    return null; 
+  }
 
   if (loading) {
     return (
@@ -200,7 +206,7 @@ const CharacterMenu: React.FC = () => {
         height: formData.height,
         birthday: formData.birthday
       });
-      setVisible(false); // Hide UI after character creation
+      setVisible(false); 
     } catch (err) {
       console.error('Failed to create character:', err);
     }
@@ -208,7 +214,7 @@ const CharacterMenu: React.FC = () => {
 
   const handleSelectCharacter = async (slot: number) => {
     await selectCharacter(slot);
-    setVisible(false); // Hide UI after character selection
+    setVisible(false); 
   };
 
 

@@ -41,6 +41,7 @@ export interface CharacterFormData {
     sex: 'male' | 'female';
 }
 
+
 export interface CharacterSelectionProps {
     characters: Character[];
     selectedChar: Character | null;
@@ -48,6 +49,7 @@ export interface CharacterSelectionProps {
     onNewCharacter: (slot: number) => void; 
     maxSlots: number;
     onPlay: (slot: number) => void;
+    autoload?: boolean; 
 }
 
 export interface CreateCharacterFormProps {
@@ -59,7 +61,6 @@ export interface CreateCharacterFormProps {
 export interface Headshots {
     [key: number]: string;
 }
-  
 
 export interface HeadshotMessage {
     action: 'updateCharacterHeadshot';
@@ -67,4 +68,20 @@ export interface HeadshotMessage {
       slot: number;
       texture: string;
     };
-  }
+}
+
+
+export interface CharacterResponse {
+    characters: Character[];
+    maxSlots: number;
+    autoload: boolean;
+}
+
+export interface UseCharactersReturn {
+    characters: Character[];
+    loading: boolean;
+    error: string | null;
+    maxSlots: number;
+    autoload: boolean;
+    selectCharacter: (slot: number) => Promise<void>;
+}
