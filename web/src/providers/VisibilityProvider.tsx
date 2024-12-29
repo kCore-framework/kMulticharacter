@@ -28,7 +28,7 @@ export const VisibilityProvider: React.FC<{ children: React.ReactNode }> = ({
     } else {
       const timeout = setTimeout(() => {
         setIsHidden(true);
-      }, 400);  // extra 100ms
+      }, 300); 
       
       return () => clearTimeout(timeout);
     }
