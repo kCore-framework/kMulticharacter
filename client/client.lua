@@ -131,6 +131,7 @@ local function UpdatePreviewPed(slot, charData, previewData)
 
     local needsNewHeadshot = false
     
+    
     if charData and charData and charData.Appearance then
         local appearance = charData.Appearance
         print(json.encode(appearance))
@@ -298,41 +299,33 @@ RegisterCommand('campos', function()
     print(GetGameplayCamCoord(), GetGameplayCamRot())
 end)
 
-AddEventHandler('playerSpawned', function(data)
-    local ped = PlayerPedId()
-    local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
-        if response.maxSlots <= 1 and response.autoload and response.characters[1] then
-            TriggerServerEvent('kCore:selectCharacter', 1)
-            toggleNuiFrame(false)
-            FreezeEntityPosition(ped, false)
-            SetEntityCoords(ped, -131.6913, 558.3939, 160.0)
-        else
-            toggleNuiFrame(true)
+CreateThread(function()
+    while true do
+		Wait(0)
+		if NetworkIsSessionStarted() then
+            local ped = PlayerPedId()
+            local chars = exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
+                CharacterSlots = response.characters
+                if response.maxSlots <= 1 and response.autoload and response.characters[1] then
+                    TriggerServerEvent('kCore:selectCharacter', 1)
+                    toggleNuiFrame(false)
+                    SetEntityCoords(ped, -131.6913, 558.3939, 160.0)
+                else
+                    toggleNuiFrame(true)
+                end
+            end)
+            break
         end
-    end)
+    end
 end)
 
 
 RegisterNUICallback('getCharacterSlots', function(data, cb)
-    exports['kCore']:TriggerServerCallback('kCore:getCharacterSlots', function(response)
-        if not response then
-            cb({ error = "Failed to fetch character slots" })
-            return
-        end
-        
-        CharacterSlots = response.characters
-        maxSlots = response.maxSlots
-
-        if maxSlots > #characterPositions then      
-            print('^1 MAX SLOTS MORE THAN CHARACTER POSITIONS')
-            maxSlots = #characterPositions
-        end
-        
-        cb({
-            characters = CharacterSlots,
-            maxSlots = maxSlots
-        })
-    end)
+    while not CharacterSlots do Wait(0) end
+    cb({
+        characters = CharacterSlots,
+        maxSlots = maxSlots
+    })
 end)
 
 RegisterNUICallback('selectCharacter', function(data, cb)
