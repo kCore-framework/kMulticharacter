@@ -82,8 +82,8 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({
         <div className="p-4 space-y-3">
           {Array.from({ length: maxSlots }, (_, i) => i + 1).map((slotNum) => {
             const char = characters.find(c => c.char_slot === slotNum);
-            
             if (char) {
+  
               return (
                 <Card
                   key={char.citizenid}

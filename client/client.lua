@@ -219,14 +219,20 @@ local function LoadCharacterSelection()
             autoLoad = response.autoload 
             TriggerServerEvent('kCore:selectCharacter', 1)
         else
+            print(json.encode(response))
             toggleNuiFrame(true)
         end
     end)
 end
 exports('LoadCharacterSelection', LoadCharacterSelection) -- use for some logout feature later in core
 
+local firstTime = false
 AddEventHandler('playerSpawned', function(data)
-    LoadCharacterSelection()
+    exports.spawnmanager:setAutoSpawn(false)
+    if not firstTime then
+        firstTime = true
+        LoadCharacterSelection()
+    end
 end)
 
 RegisterCommand('mChar', function()
@@ -279,7 +285,7 @@ RegisterNUICallback('createCharacter', function(data, cb)
     SetEntityVisible(ped, true, true)
     FreezeEntityPosition(ped, false)
 
-
+    DoScreenFadeOut(0)
     StopCameraCycle()
     HandlePreviewCamera(nil, false)
  

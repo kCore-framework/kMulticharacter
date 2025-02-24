@@ -126,7 +126,7 @@ function HandlePreviewCamera(slot, active)
             StopCameraCycle()
             if currentCam then
                 SetCamActive(currentCam, false)
-                RenderScriptCams(false, true, 1000, true, true)
+                RenderScriptCams(false, true, 0, true, true)
                 DestroyCam(currentCam, true)
                 currentCam = nil
             end
@@ -144,7 +144,7 @@ AddEventHandler('onResourceStop', function(resourceName)
     StopCameraCycle()
     if currentCam then
         SetCamActive(currentCam, false)
-        RenderScriptCams(false, true, 1000, true, true)
+        RenderScriptCams(false, true, 0, true, true)
         DestroyCam(currentCam, true)
         currentCam = nil
     end

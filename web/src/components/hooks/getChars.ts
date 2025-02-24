@@ -9,32 +9,34 @@ export const useCharacters = () => {
   const [maxSlots, setMaxSlots] = useState<number>(3);
   const [autoload, setAutoload] = useState<boolean>(false);
 
-  useEffect(() => {
+  useEffect(() => { // i hate this whole thing
     const fetchCharacters = async () => {
       try {
         setLoading(true);
         const response = await fetchNui<CharacterResponse>('getCharacterSlots');
-        const charArray = Object.entries(response.characters)
-          .map(([slot, char]) => {
-            if (!char) {
-              return null;
-            }
-            return {
+        let charArray: Character[] = [];
+        if (Array.isArray(response.characters)) {
+          charArray = response.characters
+            .filter((char): char is Character => char !== null)
+            .map(char => ({
               ...char,
-              char_slot: Number(slot) + 1  // thanks objects! >:(
-            };
-          })
-          .filter((char): char is Character => char !== null);
-        
-        console.log('Final processed characters:', charArray);
+              char_slot: char.slot
+            }));
+        } else if (typeof response.characters === 'object') {
+          charArray = Object.entries(response.characters) // eh?
+            .filter(([_, char]) => char !== null)
+            .map(([slot, char]) => ({
+              ...char!,
+              char_slot: parseInt(slot)
+            }));
+        }
         
         setCharacters(charArray);
         setMaxSlots(response.maxSlots || 3);
         setAutoload(response.autoload || false);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch characters');
-        console.error('Error fetching characters:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch characters is your servers database started?');
       } finally {
         setLoading(false);
       }

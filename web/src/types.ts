@@ -1,7 +1,8 @@
 export interface Character {
     id: number;
     citizenid: string;
-    char_slot: number; 
+    char_slot: number;  
+    slot: number;       
     Name: {
         first_name: string;
         last_name: string;
@@ -72,7 +73,7 @@ export interface HeadshotMessage {
 
 
 export interface CharacterResponse {
-    characters: Character[];
+    characters: (Character | null)[];
     maxSlots: number;
     autoload: boolean;
 }
