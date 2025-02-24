@@ -74,19 +74,11 @@ const CreateCharacterForm: React.FC<CreateCharacterFormProps> = ({ onBack, onSub
   return (
     <div className="h-full flex flex-col">
       <div className="p-4 border-b border-[hsl(var(--border))] bg-[hsl(var(--background))]">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={onBack}
-            className="p-2 hover:bg-[hsl(var(--accent)/0.3)] text-[hsl(var(--primary))] transition-all duration-200 hover:scale-105 rounded-md"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">
-              Create Character
-            </h2>
-            <p className="text-[hsl(var(--muted-foreground))] mt-2 text-sm">Enter your character details</p>
-          </div>
+        <div>
+          <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">
+            Create Character
+          </h2>
+          <p className="text-[hsl(var(--muted-foreground))] mt-2 text-sm">Enter your character details</p>
         </div>
       </div>
 
