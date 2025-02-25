@@ -55,7 +55,7 @@ const CharacterSelection: React.FC<CharacterSelectionProps> = ({
     const handleHeadshotUpdate = (event: MessageEvent) => {
       const message = event.data as HeadshotMessage;
       
-      if (message.action === 'updateCharacterHeadshot') {
+      if (message.action === 'updateCharacterHeadshot') { // meh
         setHeadshots((prev: Headshots) => ({
           ...prev,
           [message.data.slot]: `https://nui-img/${message.data.texture}/${message.data.texture}`
